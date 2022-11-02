@@ -22,9 +22,9 @@
         }
 
         [HttpGet]
-        public List<Article> List()
+        public ActionResult<List<Article>> List()
         {
-            return articleStore.GetAll();
+            return Ok(articleService.List());
         }
 
         [HttpPost]
