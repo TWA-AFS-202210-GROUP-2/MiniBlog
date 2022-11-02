@@ -3,7 +3,9 @@ namespace MiniBlogTest.ControllerTest
     using System.Net;
     using System.Net.Mime;
     using System.Text;
+    using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc.Testing;
+    using MiniBlog;
     using MiniBlog.Model;
     using MiniBlog.Stores;
     using Newtonsoft.Json;
@@ -12,6 +14,7 @@ namespace MiniBlogTest.ControllerTest
     [Collection("IntegrationTest")]
     public class UserControllerTest
     {
+        public IUserStore userStore = new UserStoreContext();
         public UserControllerTest()
             : base()
 
@@ -104,7 +107,7 @@ namespace MiniBlogTest.ControllerTest
             await PrepareArticle(new Article(userName, string.Empty, string.Empty), client);
 
             var articles = await GetArticles(client);
-            Assert.Equal(4, articles.Count);
+            Assert.Equal(2, articles.Count);
 
             var users = await GetUsers(client);
             Assert.Equal(1, users.Count);
@@ -112,7 +115,7 @@ namespace MiniBlogTest.ControllerTest
             await client.DeleteAsync($"/user?name={userName}");
 
             var articlesAfterDeleteUser = await GetArticles(client);
-            Assert.Equal(2, articlesAfterDeleteUser.Count);
+            Assert.Equal(0, articlesAfterDeleteUser.Count);
 
             var usersAfterDeleteUser = await GetUsers(client);
             Assert.Equal(0, usersAfterDeleteUser.Count);
