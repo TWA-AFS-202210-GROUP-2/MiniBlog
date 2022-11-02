@@ -4,24 +4,21 @@ namespace MiniBlog.Stores
 {
     public class UserStoreContext : IUserStore
     {
-        public bool Delete(User user)
-        {
-            throw new NotImplementedException();
-        }
-
+        private List<User> users = new List<User>();
         public List<User> GetAll()
         {
-            throw new NotImplementedException();
-        }
-
-        public void Init()
-        {
-            throw new NotImplementedException();
+            return this.users;
         }
 
         public User Save(User user)
         {
-            throw new NotImplementedException();
+            this.users.Add(user);
+            return user;
+        }
+
+        public bool Delete(User user)
+        {
+            return this.users.Remove(user);
         }
     }
 }
