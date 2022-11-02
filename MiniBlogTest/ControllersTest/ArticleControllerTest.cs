@@ -4,18 +4,23 @@
     using System.Net.Mime;
     using System.Text;
     using Microsoft.AspNetCore.Mvc.Testing;
+    using MiniBlog;
     using MiniBlog.Model;
     using MiniBlog.Stores;
+    using Moq;
     using Newtonsoft.Json;
     using Xunit;
 
     [Collection("IntegrationTest")]
     public class ArticleControllerTest
     {
+        public IArticleStore articleStore = new ArticleStoreContext();
         public ArticleControllerTest()
         {
             UserStoreWillReplaceInFuture.Instance.Init();
-            ArticleStoreWillReplaceInFuture.Instance.Init();
+            articleStore.Save(new Article(null, "Happy new year", "Happy 2021 new year"));
+            articleStore.Save(new Article(null, "Happy Halloween", "Halloween is coming"));
+
         }
 
         [Fact]
@@ -32,7 +37,13 @@
         [Fact]
         public async void Should_create_article_fail_when_ArticleStore_unavailable()
         {
-            var client = GetClient();
+            var articleStoreMocker = new Mock<IArticleStore>();
+            articleStoreMocker.Setup(x => x.Save(It.IsAny<Article>())).Throws<Exception>();
+            var factory = new WebApplicationFactory<Program>();
+            var client = factory.WithWebHostBuilder(x =>
+            {
+                x.ConfigureServices(a => a.AddSingleton(b => articleStoreMocker.Object));
+            }).CreateClient();
             string userNameWhoWillAdd = "Tom";
             string articleContent = "What a good day today!";
             string articleTitle = "Good day";
@@ -78,10 +89,13 @@
             Assert.Equal("anonymous@unknow.com", users[0].Email);
         }
 
-        private static HttpClient GetClient()
+        private HttpClient GetClient()
         {
             var factory = new WebApplicationFactory<Program>();
-            return factory.CreateClient();
+            return factory.WithWebHostBuilder(x =>
+            {
+                x.ConfigureServices(a => a.AddSingleton(articleStore));
+            }).CreateClient();
         }
     }
 }
