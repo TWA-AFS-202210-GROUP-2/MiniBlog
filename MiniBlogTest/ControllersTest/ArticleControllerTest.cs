@@ -13,7 +13,7 @@
     [Collection("IntegrationTest")]
     public class ArticleControllerTest
     {
-        private IArticleStore articleStore=new ArticleStoreContext();
+        private IArticleStore articleStore = new ArticleStoreContext();
         public ArticleControllerTest()
         {
             UserStoreWillReplaceInFuture.Instance.Init();
