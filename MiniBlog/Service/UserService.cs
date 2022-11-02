@@ -24,5 +24,10 @@ namespace MiniBlog.Service
 
             return user;
         }
+
+        public List<User> GetAll()
+        {
+            return userStore.GetAll();
+        }
     }
 }
