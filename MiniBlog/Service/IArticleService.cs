@@ -6,5 +6,6 @@ namespace MiniBlog.Service
     {
         Article Create(Article article);
         List<Article> List();
+        Article GetById(Guid id);
     }
 }

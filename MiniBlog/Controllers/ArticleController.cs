@@ -35,11 +35,9 @@
         }
 
         [HttpGet("{id}")]
-        public Article GetById(Guid id)
+        public ActionResult<Article> GetById(Guid id)
         {
-            var foundArticle =
-                articleStore.GetAll().FirstOrDefault(article => article.Id == id);
-            return foundArticle;
+            return articleService.GetById(id);
         }
     }
 }
