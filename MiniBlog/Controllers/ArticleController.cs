@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using Microsoft.AspNetCore.Mvc;
     using MiniBlog.Model;
+    using MiniBlog.Services;
     using MiniBlog.Stores;
 
     [ApiController]
@@ -12,11 +13,13 @@
     {
         private IArticleStore _articleStore;
         private IUserStore _userStore;
+        private IArticleService _articleService;
 
-        public ArticleController(IArticleStore articleStore, IUserStore userStore)
+        public ArticleController(IArticleStore articleStore, IUserStore userStore, IArticleService articleService)
         {
             _articleStore = articleStore;
             _userStore = userStore;
+            _articleService = articleService;
         }
 
         [HttpGet]

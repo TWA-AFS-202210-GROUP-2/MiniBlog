@@ -1,6 +1,7 @@
 using MiniBlog.Model;
 using MiniBlog.Stores;
 using Microsoft.AspNetCore.Mvc;
+using MiniBlog.Services;
 
 namespace MiniBlog.Controllers
 {
@@ -10,11 +11,13 @@ namespace MiniBlog.Controllers
     {
         private IArticleStore _articleStore;
         private IUserStore _userStore;
+        private IUserService _userService;
 
-        public UserController(IArticleStore articleStore, IUserStore userStore)
+        public UserController(IArticleStore articleStore, IUserStore userStore, IUserService userService)
         {
             _articleStore = articleStore;
             _userStore = userStore;
+            _userService = userService;
         }
 
         [HttpPost]
