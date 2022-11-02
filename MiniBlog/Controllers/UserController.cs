@@ -48,25 +48,13 @@ namespace MiniBlog.Controllers
         [HttpDelete]
         public User Delete(string name)
         {
-            var foundUser = _userStore.GetAll().FirstOrDefault(_ => _.Name == name);
-            if (foundUser != null)
-            {
-                _userStore.Delete(foundUser);
-                var articles = _articleStore.GetAll()
-                    .Where(article => article.UserName == foundUser.Name)
-                    .ToList();
-                articles.ForEach(article => _articleStore.Delete(article));
-            }
-
-            return foundUser;
+            return _userService.DeleteAnItem(name);
         }
 
         [HttpGet("{name}")]
         public User GetByName(string name)
         {
-            return _userStore.GetAll().FirstOrDefault(_ =>
-                string.Equals(_.Name, name, StringComparison.CurrentCultureIgnoreCase)) ?? throw new
-                InvalidOperationException();
+            return _userService.SerchByName(name);
         }
     }
 }

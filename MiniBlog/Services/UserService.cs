@@ -21,5 +21,40 @@ namespace MiniBlog.Services
             }
             return user;
         }
+
+        public List<User> GetAllItems()
+        {
+            return _userStore.GetAll();
+        }
+
+        public User DeleteAnItem(string name)
+        {
+            var foundUser = _userStore.GetAll().FirstOrDefault(_ => _.Name == name);
+            if (foundUser != null)
+            {
+                _userStore.Delete(foundUser);
+                var articles = _articleStore.GetAll()
+                    .Where(article => article.UserName == foundUser.Name)
+                    .ToList();
+                articles.ForEach(article => _articleStore.Delete(article));
+            }
+
+            return foundUser;
+        }
+
+        public User SerchByName(string name)
+        {
+            var foundUser = _userStore.GetAll().FirstOrDefault(_ => _.Name == name);
+            if (foundUser != null)
+            {
+                _userStore.Delete(foundUser);
+                var articles = _articleStore.GetAll()
+                    .Where(article => article.UserName == foundUser.Name)
+                    .ToList();
+                articles.ForEach(article => _articleStore.Delete(article));
+            }
+
+            return foundUser;
+        }
     }
 }
