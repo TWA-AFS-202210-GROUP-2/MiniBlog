@@ -19,7 +19,6 @@
             _articleService = articleService;
         }
 
-
         [HttpGet]
         public List<Article> List()
         {
@@ -37,9 +36,7 @@
         [HttpGet("{id}")]
         public Article GetById(Guid id)
         {
-            var foundArticle =
-                _articleService.GetAllArticles().FirstOrDefault(article => article.Id == id);
-            return foundArticle;
+            return _articleService.GetArticle(id);
         }
     }
 }

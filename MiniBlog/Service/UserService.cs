@@ -14,7 +14,7 @@ public class UserService : IUserService
         _articleStore = articleStore;
     }
 
-    public User? RegisterUser(User user)
+    public User? Save(User user)
     {
         if (!_userStore.GetAll().Exists(_ => user.Name.ToLower() == _.Name.ToLower()))
         {
@@ -25,7 +25,7 @@ public class UserService : IUserService
         return null;
     }
 
-    public List<User> GetAllUsers()
+    public List<User> GetAll()
     {
         return _userStore.GetAll();
     }
@@ -41,7 +41,7 @@ public class UserService : IUserService
         return foundUser;
     }
 
-    public bool DeleteUser(string name)
+    public User Delete(string name)
     {
         var foundUser = _userStore.GetAll().FirstOrDefault(_ => _.Name == name);
         if (foundUser != null)
@@ -51,10 +51,9 @@ public class UserService : IUserService
                 .Where(article => article.UserName == foundUser.Name)
                 .ToList();
             articles.ForEach(article => _articleStore.Delete(article));
-            return true;
         }
 
-        return false;
+        return foundUser;
     }
 
     public User? GetUserByName(string name)
