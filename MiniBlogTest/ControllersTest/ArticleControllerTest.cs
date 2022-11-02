@@ -4,7 +4,6 @@
     using System.Net.Mime;
     using System.Text;
     using Microsoft.AspNetCore.Mvc.Testing;
-    using MiniBlog;
     using MiniBlog.Model;
     using MiniBlog.Stores;
     using Moq;

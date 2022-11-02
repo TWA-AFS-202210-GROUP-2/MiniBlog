@@ -1,6 +1,6 @@
 ﻿using MiniBlog.Model;
 
-namespace MiniBlog
+namespace MiniBlog.Stores
 {
     public interface IArticleStore
     {
