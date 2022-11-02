@@ -4,18 +4,23 @@
     using System.Net.Mime;
     using System.Text;
     using Microsoft.AspNetCore.Mvc.Testing;
+    using MiniBlog;
     using MiniBlog.Model;
     using MiniBlog.Stores;
+    using Moq;
     using Newtonsoft.Json;
     using Xunit;
 
     [Collection("IntegrationTest")]
     public class ArticleControllerTest
     {
+        private IArticleStore _articleStore = new ArticleStoreContext();
         public ArticleControllerTest()
         {
             UserStoreWillReplaceInFuture.Instance.Init();
             ArticleStoreWillReplaceInFuture.Instance.Init();
+            _articleStore.Save(new Article(null, "Happy new year", "Happy 2021 new year"));
+            _articleStore.Save(new Article(null, "Happy Halloween", "Halloween is coming"));
         }
 
         [Fact]
@@ -32,7 +37,15 @@
         [Fact]
         public async void Should_create_article_fail_when_ArticleStore_unavailable()
         {
-            var client = GetClient();
+            var articleStoreMock = new Mock<IArticleStore>();
+            articleStoreMock.Setup(store => store.Save(It.IsAny<Article>())).Throws<Exception>();
+            var factory = new WebApplicationFactory<Program>();
+            var client = factory.WithWebHostBuilder(builder =>
+            {
+                builder.ConfigureServices(services =>
+                services.AddSingleton(ServiceProvider => articleStoreMock.Object));
+            }).CreateClient();
+
             string userNameWhoWillAdd = "Tom";
             string articleContent = "What a good day today!";
             string articleTitle = "Good day";
@@ -78,10 +91,14 @@
             Assert.Equal("anonymous@unknow.com", users[0].Email);
         }
 
-        private static HttpClient GetClient()
+        private HttpClient GetClient()
         {
             var factory = new WebApplicationFactory<Program>();
-            return factory.CreateClient();
+            return factory.WithWebHostBuilder(builder =>
+            {
+                builder.ConfigureServices(services =>
+                services.AddSingleton(_articleStore));
+            }).CreateClient();
         }
     }
 }
