@@ -40,5 +40,20 @@ namespace MiniBlog.Service
 
             return foundUser;
         }
+
+        public User Delete(string name)
+        {
+            var foundUser = userStore.GetAll().FirstOrDefault(_ => _.Name == name);
+            if (foundUser != null)
+            {
+                userStore.Delete(foundUser);
+                var articles = this.articleStore.GetAll()
+                    .Where(article => article.UserName == foundUser.Name)
+                    .ToList();
+                articles.ForEach(article => this.articleStore.Delete(article));
+            }
+
+            return foundUser;
+        }
     }
 }

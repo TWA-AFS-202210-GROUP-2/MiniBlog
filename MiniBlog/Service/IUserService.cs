@@ -7,5 +7,6 @@ namespace MiniBlog.Service
         User Register(User user);
         List<User> GetAll();
         User Update(User user);
+        User Delete(string name);
     }
 }
