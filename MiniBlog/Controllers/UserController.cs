@@ -9,9 +9,11 @@ namespace MiniBlog.Controllers
     public class UserController : ControllerBase
     {
         private IArticleStore articleStore;
-        public UserController(IArticleStore articleStore)
+        private IUserStore userStore;
+        public UserController(IArticleStore articleStore, IUserStore userStore)
         {
             this.articleStore = articleStore;
+            this.userStore = userStore;
         }
 
         [HttpPost]
