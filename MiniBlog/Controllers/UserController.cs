@@ -19,9 +19,9 @@ namespace MiniBlog.Controllers
         [HttpPost]
         public ActionResult<User> Register(User user)
         {
-            if (!UserStoreWillReplaceInFuture.Instance.GetAll().Exists(_ => user.Name.ToLower() == _.Name.ToLower()))
+            if (!userStore.GetAll().Exists(_ => user.Name.ToLower() == _.Name.ToLower()))
             {
-                UserStoreWillReplaceInFuture.Instance.Save(user);
+                userStore.Save(user);
             }
 
             return Created("/user", user);
@@ -30,13 +30,13 @@ namespace MiniBlog.Controllers
         [HttpGet]
         public List<User> GetAll()
         {
-            return UserStoreWillReplaceInFuture.Instance.GetAll();
+            return userStore.GetAll();
         }
 
         [HttpPut]
         public User Update(User user)
         {
-            var foundUser = UserStoreWillReplaceInFuture.Instance.GetAll().FirstOrDefault(_ => _.Name == user.Name);
+            var foundUser = userStore.GetAll().FirstOrDefault(_ => _.Name == user.Name);
             if (foundUser != null)
             {
                 foundUser.Email = user.Email;
@@ -48,10 +48,10 @@ namespace MiniBlog.Controllers
         [HttpDelete]
         public User Delete(string name)
         {
-            var foundUser = UserStoreWillReplaceInFuture.Instance.GetAll().FirstOrDefault(_ => _.Name == name);
+            var foundUser = userStore.GetAll().FirstOrDefault(_ => _.Name == name);
             if (foundUser != null)
             {
-                UserStoreWillReplaceInFuture.Instance.Delete(foundUser);
+                userStore.Delete(foundUser);
                 var articles = this.articleStore.GetAll()
                     .Where(article => article.UserName == foundUser.Name)
                     .ToList();
@@ -64,7 +64,7 @@ namespace MiniBlog.Controllers
         [HttpGet("{name}")]
         public User GetByName(string name)
         {
-            return UserStoreWillReplaceInFuture.Instance.GetAll().FirstOrDefault(_ =>
+            return userStore.GetAll().FirstOrDefault(_ =>
                 string.Equals(_.Name, name, StringComparison.CurrentCultureIgnoreCase)) ?? throw new
                 InvalidOperationException();
         }

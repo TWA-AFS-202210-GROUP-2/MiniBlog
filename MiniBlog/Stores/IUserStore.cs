@@ -6,7 +6,6 @@ namespace MiniBlog.Stores
     {
         bool Delete(User user);
         List<User> GetAll();
-        void Init();
         User Save(User user);
     }
 }
