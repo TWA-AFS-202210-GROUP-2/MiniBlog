@@ -25,21 +25,13 @@
         [HttpGet]
         public List<Article> List()
         {
-            return _articleStore.GetAll();
+            return _articleService.GetAllArticle();
         }
 
         [HttpPost]
         public ActionResult<Article> Create(Article article)
         {
-            if (article.UserName != null)
-            {
-                if (!_userStore.GetAll().Exists(_ => article.UserName == _.Name))
-                {
-                    _userStore.Save(new User(article.UserName));
-                }
-
-                _articleStore.Save(article);
-            }
+            _articleService.CreateArticle(article);
 
             return new CreatedResult(string.Empty,article);
         }

@@ -19,5 +19,19 @@ namespace MiniBlog.Services
             return _articleStore.GetAll();
         }
 
+        public Article CreateArticle(Article article)
+        {
+            if (article.UserName != null)
+            {
+                if (!_userStore.GetAll().Exists(_ => article.UserName == _.Name))
+                {
+                    _userStore.Save(new User(article.UserName));
+                }
+
+                _articleStore.Save(article);
+            }
+            return article;
+        }
+
     }
 }
