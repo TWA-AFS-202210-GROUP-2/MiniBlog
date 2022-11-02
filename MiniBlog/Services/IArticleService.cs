@@ -8,5 +8,7 @@ namespace MiniBlog.Services
         public List<Article> GetAllArticle();
 
         public Article CreateArticle(Article article);
+
+        Article SearchById(Guid guid);
     }
 }

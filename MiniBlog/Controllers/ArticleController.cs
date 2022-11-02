@@ -39,9 +39,7 @@
         [HttpGet("{id}")]
         public Article GetById(Guid id)
         {
-            var foundArticle =
-                _articleStore.GetAll().FirstOrDefault(article => article.Id == id);
-            return foundArticle;
+            return _articleService.SearchById(id);
         }
     }
 }
