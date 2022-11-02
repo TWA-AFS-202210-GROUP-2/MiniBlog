@@ -92,9 +92,9 @@
         private HttpClient GetClient()
         {
             var factory = new WebApplicationFactory<Program>();
-            return factory.WithWebHostBuilder(x =>
+            return factory.WithWebHostBuilder(builder =>
             {
-                x.ConfigureServices(a => a.AddSingleton(articleStore));
+                builder.ConfigureServices(service => service.AddSingleton(articleStore));
             }).CreateClient();
         }
     }
