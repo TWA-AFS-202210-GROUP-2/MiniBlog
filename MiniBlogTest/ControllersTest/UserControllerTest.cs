@@ -6,19 +6,17 @@ namespace MiniBlogTest.ControllerTest
     using Microsoft.AspNetCore.Mvc.Testing;
     using MiniBlog.Model;
     using MiniBlog.Stores;
+    using Moq;
     using Newtonsoft.Json;
     using Xunit;
 
     [Collection("IntegrationTest")]
     public class UserControllerTest
     {
+        private IArticleStore _articleStore = new ArticleStoreContext();
+        private IUserStore _userStore = new UserStoreContext();
         public UserControllerTest()
-            : base()
-
-        {
-            UserStoreWillReplaceInFuture.Instance.Init();
-            ArticleStoreWillReplaceInFuture.Instance.Init();
-        }
+            : base() { }
 
         [Fact]
         public async Task Should_get_all_users()
@@ -56,8 +54,14 @@ namespace MiniBlogTest.ControllerTest
         [Fact]
         public async Task Should_register_user_fail_when_UserStore_unavailable()
         {
-            var client = GetClient();
-
+            var userSoreMocker = new Mock<IUserStore>();    
+            userSoreMocker.Setup(store => store.Save(It.IsAny<User>())).Throws<Exception>();
+            var factory = new WebApplicationFactory<Program>();
+            var client = factory.WithWebHostBuilder(builder =>
+            {
+                builder.ConfigureServices(services =>
+                services.AddSingleton(ServiceProvider => userSoreMocker.Object));
+            }).CreateClient();
             var userName = "Tom";
             var email = "a@b.com";
             var user = new User(userName, email);
@@ -104,7 +108,7 @@ namespace MiniBlogTest.ControllerTest
             await PrepareArticle(new Article(userName, string.Empty, string.Empty), client);
 
             var articles = await GetArticles(client);
-            Assert.Equal(4, articles.Count);
+            Assert.Equal(2, articles.Count);
 
             var users = await GetUsers(client);
             Assert.Equal(1, users.Count);
@@ -112,7 +116,7 @@ namespace MiniBlogTest.ControllerTest
             await client.DeleteAsync($"/user?name={userName}");
 
             var articlesAfterDeleteUser = await GetArticles(client);
-            Assert.Equal(2, articlesAfterDeleteUser.Count);
+            Assert.Equal(0, articlesAfterDeleteUser.Count);
 
             var usersAfterDeleteUser = await GetUsers(client);
             Assert.Equal(0, usersAfterDeleteUser.Count);
@@ -141,10 +145,17 @@ namespace MiniBlogTest.ControllerTest
             await client.PostAsync("/article", registerUserContent);
         }
 
-        private static HttpClient GetClient()
+        private HttpClient GetClient()
         {
             var factory = new WebApplicationFactory<Program>();
-            return factory.CreateClient();
+            return factory.WithWebHostBuilder(builder =>
+            {
+                builder.ConfigureServices(services =>
+                {
+                    services.AddSingleton(ServiceProvider => _articleStore);
+                    services.AddSingleton(ServiceProvider => _userStore);
+                });
+            }).CreateClient();
         }
     }
 }
